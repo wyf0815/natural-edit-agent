@@ -1,0 +1,36 @@
+name: v9.8 public regression
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Audit checked-out public release contents
+        run: npm run release:audit
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install segmentation test dependencies
+        run: python -m pip install -r requirements-segmentation.txt
+      - name: Check JavaScript syntax
+        run: npm run check
+      - name: Run public regression suite
+        run: npm test
+      - name: Check v9.8 bridge suite and model skip path
+        run: npm run test:v98:bridge

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="model-providers.js"></script>
+    <script src="visual-contract.js"></script>
+    <script src="protocol.js"></script>
+    <script src="state-engine.js"></script>
+    <script src="mask-rle.js"></script>
+    <script src="selection-session.js"></script>
+    <script src="confidence-policy.js"></script>
+    <script src="capabilities.js"></script>
+    <script src="planner.js"></script>
+    <script src="engine.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <main class="panel">
+      <header class="header">
+        <div>
+          <h1>Natural Edit Agent v9.8</h1>
+          <p>直接说你想怎么改，助手会读取当前画面并调用 Photoshop 完成。</p>
+        </div>
+        <button id="refreshState" class="icon-button" type="button" title="刷新文档状态">↻</button>
+      </header>
+
+      <section class="document-strip" aria-live="polite">
+        <span id="documentDot" class="status-dot"></span>
+        <div>
+          <strong id="documentTitle">正在读取Photoshop...</strong>
+          <span id="documentSummary"></span>
+        </div>
+      </section>
+
+      <details class="state-details" open>
+        <summary>查看当前文件结构</summary>
+        <div id="stateMetrics" class="metrics"></div>
+        <div id="selectedLayers" class="selected-layers"></div>
+        <div class="insight-block">
+          <div class="insight-title-row">
+            <h3>画面主要颜色（前10）</h3>
+            <button id="toggleColorPicker" class="compact-button" type="button">悬停取色</button>
+          </div>
+          <div id="colorPickerPanel" class="color-picker-panel hidden">
+            <div id="colorPickerCanvas" class="color-picker-canvas">
+              <img id="colorPickerImage" alt="当前 Photoshop 画面取色预览" draggable="false" />
+              <span id="colorPickerCrosshair" class="color-picker-crosshair hidden"></span>
+            </div>
+            <div class="color-picker-readout">
+              <span id="colorPickerSwatch" class="color-picker-swatch"></span>
+              <div>
+                <strong id="colorPickerHex">移动鼠标开始取色</strong>
+                <span id="colorPickerRgb">单击即可复制色号</span>
+                <span id="colorPickerPosition"></span>
+              </div>
+            </div>
+            <span id="colorPickerState" class="field-hint">默认读取光标周围 5×5 像素的平均色。</span>
+          </div>
+          <textarea id="dominantColors" class="color-palette palette-text" readonly spellcheck="false" aria-label="画面主要颜色">正在分析画面颜色...</textarea>
+          <div class="palette-picker">
+            <label for="paletteCategory">选择颜色区域</label>
+            <select id="paletteCategory" disabled></select>
+            <label>点击色号直接复制</label>
+            <div id="paletteSlots" class="palette-slots">
+              <button id="paletteSlot0" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot1" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot2" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot3" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot4" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot5" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot6" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot7" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot8" class="palette-slot" type="button" disabled></button>
+              <button id="paletteSlot9" class="palette-slot" type="button" disabled></button>
+            </div>
+            <div class="palette-copy-actions">
+              <span id="paletteCopyState" class="field-hint"></span>
+            </div>
+          </div>
+          <div class="semantic-colors-section">
+            <h3>按区域拆分颜色</h3>
+            <span id="semanticColorsStatus" class="field-hint"></span>
+            <div id="semanticColors"></div>
+          </div>
+        </div>
+        <div class="insight-grid">
+          <div class="insight-block">
+            <h3>图层</h3>
+            <div id="layerInventory" class="inventory-list"></div>
+          </div>
+          <div class="insight-block">
+            <h3>蒙版与文字</h3>
+            <div id="maskInventory" class="inventory-list"></div>
+          </div>
+        </div>
+        <div class="diagnostic-row">
+          <button id="runSelfTest" type="button">运行环境自检</button>
+          <span id="selfTestState">尚未自检</span>
+        </div>
+      </details>
+
+      <details class="settings">
+        <summary>模型设置</summary>
+        <label for="provider">模型厂商</label>
+        <select id="provider"></select>
+        <span class="field-hint">通常只需选择厂商并填写 API Key，插件会自动使用推荐模型。</span>
+        <label id="apiKeyLabel" for="apiKey">API Key</label>
+        <input id="apiKey" type="password" autocomplete="off" />
+        <span class="field-hint key-storage-warning">按当前版本约定，API Key 会以明文保存在本机插件设置（localStorage）中；这不会阻断 v9.8，但属于已接受的本机安全风险。</span>
+        <details class="model-advanced">
+          <summary>高级模型选择（一般不用改）</summary>
+          <label for="model">意图理解模型</label>
+          <select id="model"></select>
+          <div id="customModelFields" class="hidden">
+            <label for="customModel">Tokensea 模型 ID（自动读取失败时填写）</label>
+            <input id="customModel" type="text" autocomplete="off" placeholder="例如：模型列表中的 id" />
+            <button id="refreshModels" type="button">读取 Tokensea 模型列表</button>
+          </div>
+          <span id="modelCapability" class="field-hint"></span>
+        </details>
+        <div class="inline-actions">
+          <button id="saveSettings" type="button">保存设置</button>
+          <span id="settingsState"></span>
+        </div>
+      </details>
+
+      <section class="command-section">
+        <label for="instruction">你想怎么改？</label>
+        <textarea id="instruction" lang="zh-CN" spellcheck="false" placeholder="例如：把当前文字改成红色，字号调整为48。"></textarea>
+        <div class="reference-row">
+          <button id="pasteReference" type="button">粘贴截图</button>
+          <button id="chooseReference" type="button">选择批注图</button>
+          <button id="clearReference" type="button" disabled>清除图片</button>
+        </div>
+        <span id="referenceName" class="reference-name">未添加批注图；可点“粘贴截图”，或在未编辑文字时按 Ctrl+V</span>
+        <img id="referencePreview" class="reference-preview hidden" alt="批注图预览" />
+        <button id="analyze" class="primary command-submit" type="button">分析 / 生成操作</button>
+        <button id="cancelRequest" class="request-cancel hidden" type="button">停止等待</button>
+      </section>
+
+      <section id="planSection" class="plan-section hidden" aria-live="polite">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">执行前确认</span>
+            <h2 id="planTitle">计划待确认</h2>
+          </div>
+          <span id="routeBadge" class="badge"></span>
+        </div>
+        <p id="planSummary"></p>
+        <div id="targetPreview" class="target-preview hidden">
+          <div class="target-preview-heading">
+            <strong>系统准备修改这里</strong>
+            <span id="targetPreviewLabel"></span>
+          </div>
+          <div id="targetPreviewCanvas" class="target-preview-canvas">
+            <img id="targetPreviewImage" alt="当前Photoshop画面与自动定位范围" />
+            <div id="targetSearchBox" class="target-search-box"></div>
+            <div id="targetObjectBox" class="target-object-box"></div>
+            <div id="targetMatchBox" class="target-match-box hidden"></div>
+            <span id="targetSeed" class="target-seed" title="目标种子点"></span>
+            <svg id="selectionLassoOverlay" class="selection-lasso-overlay" aria-hidden="true">
+              <path id="selectionLassoPath"></path>
+            </svg>
+          </div>
+          <div class="target-preview-legend" aria-label="定位与候选图例">
+            <span><i class="legend-search"></i>安全搜索范围</span>
+            <span><i class="legend-target"></i>预计目标范围</span>
+            <span><i class="legend-match"></i>实际候选范围</span>
+            <span><i class="legend-mask"></i>以 Photoshop 活动选区为准</span>
+          </div>
+          <p id="targetPreviewHelp">候选会先写入 Photoshop 活动选区。可用点选、自由套索或 Photoshop 原生工具修正，再锁定为执行时的权威选区。</p>
+          <div id="pointCandidateTools" class="candidate-tools" role="group" aria-label="点选修正候选选区">
+            <button id="candidateReplace" class="candidate-mode active" type="button">重新定位</button>
+            <button id="candidateAdd" class="candidate-mode" type="button">补选部件</button>
+            <button id="candidateExclude" class="candidate-mode" type="button">排除误选</button>
+            <button id="candidateReset" type="button">恢复自动结果</button>
+          </div>
+          <div class="candidate-tools lasso-tools" role="group" aria-label="自由套索硬约束">
+            <button id="lassoReplace" class="candidate-mode" type="button">套索替换</button>
+            <button id="lassoAdd" class="candidate-mode" type="button">套索加选</button>
+            <button id="lassoSubtract" class="candidate-mode" type="button">套索减选</button>
+            <button id="lassoIntersect" class="candidate-mode" type="button">套索取交集</button>
+          </div>
+          <div class="native-selection-tools">
+            <button id="nativeSelectionHelp" type="button">用 Photoshop 原生工具修正</button>
+            <button id="adoptCurrentSelection" type="button">采用 Photoshop 当前选区</button>
+            <button id="removeFailedTarget" class="hidden" type="button">删除这个失败目标</button>
+          </div>
+          <p class="data-disclosure">全图缩略图仅用于语义定位；对象分割只发送搜索区域裁剪。若启用模型复核，会发送搜索区域与完整选区叠加图。API Key 按你的设置明文保存在本机。</p>
+          <label id="lowConfidenceAcceptRow" class="low-confidence-accept hidden">
+            <input id="acceptLowConfidence" type="checkbox" />
+            我已检查，明确接受这个低置信度候选
+          </label>
+          <div class="candidate-confirm-row">
+            <span id="candidateState" class="candidate-state">等待候选选区</span>
+            <button id="confirmCandidate" class="primary" type="button">这个选区正确</button>
+          </div>
+        </div>
+        <ol id="planSteps" class="plan-steps"></ol>
+        <div id="planWarnings" class="warning hidden"></div>
+        <label id="highRiskConfirmation" class="high-risk-confirmation hidden">
+          <input id="confirmHighRisk" type="checkbox" />
+          <span id="highRiskConfirmationText">我单独授权高风险操作</span>
+        </label>
+        <div class="plan-actions">
+          <button id="cancelPlan" type="button">取消</button>
+          <button id="executePlan" class="primary" type="button">确认并执行</button>
+        </div>
+      </section>
+
+      <section class="result-section" aria-live="polite">
+        <div class="section-heading compact">
+          <span class="eyebrow">执行结果</span>
+          <button id="undoLast" type="button" disabled>撤销本次操作</button>
+        </div>
+        <div id="result" class="result muted">等待指令。</div>
+        <details>
+          <summary>技术日志</summary>
+          <pre id="technicalDetails">暂无。</pre>
+        </details>
+      </section>
+    </main>
+  </body>
+</html>

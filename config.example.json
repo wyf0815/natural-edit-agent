@@ -1,0 +1,12 @@
+{
+  "providers": {
+    "tokensea": {
+      "baseUrl": "http://127.0.0.1:39210/gateway/v1",
+      "apiKey": ""
+    },
+    "qwen": {
+      "apiKey": "",
+      "apiUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+    }
+  }
+}

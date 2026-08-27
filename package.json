@@ -1,0 +1,20 @@
+{
+  "name": "natural-edit-agent",
+  "version": "0.9.8",
+  "private": false,
+  "description": "Natural-language Photoshop automation with a UXP plugin, controlled execution, and semantic local editing.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "npm run check:v98",
+    "test": "npm run test:v98",
+    "check:v98": "node --check uxp-v9.8/model-providers.js && node --check uxp-v9.8/visual-contract.js && node --check uxp-v9.8/protocol.js && node --check uxp-v9.8/state-engine.js && node --check uxp-v9.8/mask-rle.js && node --check uxp-v9.8/confidence-policy.js && node --check uxp-v9.8/selection-session.js && node --check uxp-v9.8/capabilities.js && node --check uxp-v9.8/planner.js && node --check uxp-v9.8/engine.js && node --check uxp-v9.8/main.js && node --check server.js",
+    "test:v98": "node tests/run-v98-public.js",
+    "test:v98:bridge": "node tests/run-v98-bridge.js",
+    "test:v98:bridge:strict": "node tests/run-v98-bridge-strict.js",
+    "release:audit": "node tools/audit-public-release.js .",
+    "release:stage": "node tools/stage-public-release.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

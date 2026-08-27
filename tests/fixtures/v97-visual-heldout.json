@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "suite": "v9.7 visual contract held-out evaluation",
+  "frozen": true,
+  "policy": "These instructions are evaluation-only. They must never be copied into the production prompt or used as few-shot examples.",
+  "cases": [
+    {
+      "id": "accept-whole-car-source-color",
+      "kind": "accept",
+      "axes": ["whole_object", "multiple_instances", "source_color_locator", "appearance"],
+      "instruction": "仅把左上角的红色汽车改成蓝色，保留金属质感和反光。",
+      "planned": { "description": "左上角汽车", "semanticScope": "whole_object", "preserveAppearance": ["texture", "highlights"] },
+      "expect": { "scope": "whole_object", "entity": "汽车", "part": "", "positions": ["top_left"], "sourceColorFamilies": ["red"], "protectedRegions": [], "preserveAppearance": ["highlights", "texture"] }
+    },
+    {
+      "id": "accept-whole-toy-bottom-right",
+      "kind": "accept",
+      "axes": ["whole_object", "multiple_instances", "source_color_locator", "appearance"],
+      "instruction": "把右下角的绿色玩具换成橙色，保持图案和阴影不变。",
+      "planned": { "description": "右下角玩具", "semanticScope": "whole_object", "preserveAppearance": ["pattern", "shadows"] },
+      "expect": { "scope": "whole_object", "entity": "玩具", "part": "", "positions": ["bottom_right"], "sourceColorFamilies": ["green"], "protectedRegions": [], "preserveAppearance": ["shadows", "pattern"] }
+    },
+    {
+      "id": "accept-whole-product-right",
+      "kind": "accept",
+      "axes": ["whole_object", "source_color_locator", "appearance", "description_omission"],
+      "instruction": "将右侧蓝色商品变成灰色，维持原来的纹理与明暗。",
+      "planned": { "description": "右侧商品", "semanticScope": "whole_object", "preserveAppearance": ["texture", "lighting"] },
+      "expect": { "scope": "whole_object", "entity": "商品", "part": "", "positions": ["right"], "sourceColorFamilies": ["blue"], "protectedRegions": [], "preserveAppearance": ["lighting", "texture"] }
+    },
+    {
+      "id": "accept-whole-pet-foreground",
+      "kind": "accept",
+      "axes": ["whole_object", "position", "appearance"],
+      "instruction": "只把前景的黄色宠物调成紫色，毛绒质感和光影保持原样。",
+      "planned": { "description": "前景黄色宠物", "semanticScope": "whole_object", "preserveAppearance": ["texture", "lighting"] },
+      "expect": { "scope": "whole_object", "entity": "宠物", "part": "", "positions": ["foreground"], "sourceColorFamilies": ["yellow"], "protectedRegions": [], "preserveAppearance": ["lighting", "texture"] }
+    },
+    {
+      "id": "accept-whole-icon-center",
+      "kind": "accept",
+      "axes": ["whole_object", "source_color_locator", "appearance"],
+      "instruction": "把中央的白色图标改为粉色，保留渐变和描边。",
+      "planned": { "description": "中央白色图标", "semanticScope": "whole_object", "preserveAppearance": ["gradient", "outline"] },
+      "expect": { "scope": "whole_object", "entity": "图标", "part": "", "positions": ["center"], "sourceColorFamilies": ["white"], "protectedRegions": [], "preserveAppearance": ["outline", "gradient"] }
+    },
+    {
+      "id": "accept-whole-building-spatial-protection",
+      "kind": "accept",
+      "axes": ["whole_object", "spatial_protection", "negation"],
+      "instruction": "将左侧建筑整体改成灰色，窗户不要改。",
+      "planned": { "description": "左侧建筑", "semanticScope": "whole_object", "protectedRegions": ["窗户"] },
+      "expect": { "scope": "whole_object", "entity": "建筑", "part": "", "positions": ["left"], "sourceColorFamilies": [], "protectedRegions": ["窗户"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-whole-flower-appearance",
+      "kind": "accept",
+      "axes": ["whole_object", "source_color_locator", "appearance"],
+      "instruction": "把右侧粉色花朵换成蓝色，花瓣的纹理和渐变保持不变。",
+      "planned": { "description": "右侧粉色花朵", "semanticScope": "whole_object", "preserveAppearance": ["texture", "gradient"] },
+      "expect": { "scope": "whole_object", "entity": "花朵", "part": "", "positions": ["right"], "sourceColorFamilies": ["pink"], "protectedRegions": [], "preserveAppearance": ["texture", "gradient"] }
+    },
+    {
+      "id": "accept-whole-tree-bottom",
+      "kind": "accept",
+      "axes": ["whole_object", "position", "appearance"],
+      "instruction": "把下方的树木调成橙色，保留树冠形状与阴影。",
+      "planned": { "description": "下方树木", "semanticScope": "whole_object", "preserveAppearance": ["shape", "shadows"] },
+      "expect": { "scope": "whole_object", "entity": "树木", "part": "", "positions": ["bottom"], "sourceColorFamilies": [], "protectedRegions": [], "preserveAppearance": ["shadows", "shape"] }
+    },
+    {
+      "id": "accept-whole-fruit-center",
+      "kind": "accept",
+      "axes": ["whole_object", "source_color_locator", "appearance"],
+      "instruction": "将中央绿色水果改为青色，仍然保留高光。",
+      "planned": { "description": "中央水果", "semanticScope": "whole_object", "preserveAppearance": ["highlights"] },
+      "expect": { "scope": "whole_object", "entity": "水果", "part": "", "positions": ["center"], "sourceColorFamilies": ["green"], "protectedRegions": [], "preserveAppearance": ["highlights"] }
+    },
+    {
+      "id": "accept-whole-product-label-protected",
+      "kind": "accept",
+      "axes": ["whole_object", "spatial_protection", "negation"],
+      "instruction": "把上方橙色商品改成棕色，正面的标签不要动。",
+      "planned": { "description": "上方橙色商品", "semanticScope": "whole_object", "protectedRegions": ["正面的标签"] },
+      "expect": { "scope": "whole_object", "entity": "商品", "part": "", "positions": ["top"], "sourceColorFamilies": ["orange"], "protectedRegions": ["标签"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-hair",
+      "kind": "accept",
+      "axes": ["subpart", "source_color_locator", "spatial_protection"],
+      "instruction": "只把左侧人物的绿色头发换成紫色，皮肤和眉毛保持原样。",
+      "planned": { "description": "左侧人物的绿色头发", "semanticScope": "subpart", "sourceColorFamilies": ["green"], "protectedRegions": ["皮肤", "眉毛"] },
+      "expect": { "scope": "subpart", "entity": "人物", "part": "头发", "positions": ["left"], "sourceColorFamilies": ["green"], "protectedRegions": ["皮肤", "眉毛"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-sleeve",
+      "kind": "accept",
+      "axes": ["subpart", "multiple_instances", "spatial_protection"],
+      "instruction": "将右侧人物的红色衣袖改成蓝色，手和衣服图案不要改。",
+      "planned": { "description": "右侧人物的红色衣袖", "semanticScope": "subpart", "sourceColorFamilies": ["red"], "protectedRegions": ["手", "衣服"], "preserveAppearance": ["pattern"] },
+      "expect": { "scope": "subpart", "entity": "人物", "part": "衣袖", "positions": ["right"], "sourceColorFamilies": ["red"], "protectedRegions": ["手", "衣服"], "preserveAppearance": ["pattern"] }
+    },
+    {
+      "id": "accept-subpart-badge",
+      "kind": "accept",
+      "axes": ["subpart", "source_color_locator", "spatial_protection"],
+      "instruction": "把中央汽车的蓝色徽章改成绿色，车身和文字不变。",
+      "planned": { "description": "中央汽车的蓝色徽章", "semanticScope": "subpart", "sourceColorFamilies": ["blue"], "protectedRegions": ["车身", "文字"] },
+      "expect": { "scope": "subpart", "entity": "汽车", "part": "徽章", "positions": ["center"], "sourceColorFamilies": ["blue"], "protectedRegions": ["车身", "文字"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-leaf",
+      "kind": "accept",
+      "axes": ["subpart", "source_color_locator", "spatial_protection"],
+      "instruction": "把左侧植物的黄色叶片变成蓝色，花朵和花瓣不要修改。",
+      "planned": { "description": "左侧植物的黄色叶片", "semanticScope": "subpart", "sourceColorFamilies": ["yellow"], "protectedRegions": ["花朵", "花瓣"] },
+      "expect": { "scope": "subpart", "entity": "植物", "part": "叶片", "positions": ["left"], "sourceColorFamilies": ["yellow"], "protectedRegions": ["花朵", "花瓣"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-body",
+      "kind": "accept",
+      "axes": ["subpart", "spatial_protection", "negation"],
+      "instruction": "只调整右侧机器人的身体为青色，嘴、眼睛和按钮别动。",
+      "planned": { "description": "右侧机器人的身体", "semanticScope": "subpart", "protectedRegions": ["嘴", "眼睛", "按钮"] },
+      "expect": { "scope": "subpart", "entity": "机器人", "part": "身体", "positions": ["right"], "sourceColorFamilies": [], "protectedRegions": ["嘴", "眼睛", "按钮"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-skin",
+      "kind": "accept",
+      "axes": ["subpart", "spatial_protection", "negation"],
+      "instruction": "把前景人物的皮肤调成棕色，头发和衣服维持原样。",
+      "planned": { "description": "前景人物的皮肤", "semanticScope": "subpart", "protectedRegions": ["头发", "衣服"] },
+      "expect": { "scope": "subpart", "entity": "人物", "part": "皮肤", "positions": ["foreground"], "sourceColorFamilies": [], "protectedRegions": ["头发", "衣服"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-button",
+      "kind": "accept",
+      "axes": ["subpart", "source_color_locator", "spatial_protection"],
+      "instruction": "把中央玩具的蓝色按钮换成红色，屏幕保持不变。",
+      "planned": { "description": "中央玩具的蓝色按钮", "semanticScope": "subpart", "sourceColorFamilies": ["blue"], "protectedRegions": ["屏幕"] },
+      "expect": { "scope": "subpart", "entity": "玩具", "part": "按钮", "positions": ["center"], "sourceColorFamilies": ["blue"], "protectedRegions": ["屏幕"], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-subpart-wheel",
+      "kind": "accept",
+      "axes": ["subpart", "source_color_locator", "appearance"],
+      "instruction": "只把右侧汽车的黑色轮子改成白色，轮胎纹理要保留。",
+      "planned": { "description": "右侧汽车的黑色轮子", "semanticScope": "subpart", "sourceColorFamilies": ["black"], "preserveAppearance": ["texture"] },
+      "expect": { "scope": "subpart", "entity": "汽车", "part": "轮子", "positions": ["right"], "sourceColorFamilies": ["black"], "protectedRegions": [], "preserveAppearance": ["texture"] }
+    },
+    {
+      "id": "accept-description-extra-protection",
+      "kind": "accept",
+      "axes": ["subpart", "description_addition", "extra_protection_sanitized"],
+      "instruction": "只把右侧机器人的身体改成蓝色。",
+      "planned": { "description": "右侧机器人的身体，排除嘴和眼睛", "semanticScope": "subpart", "excludePoints": [{ "x": 72, "y": 44 }] },
+      "expect": { "scope": "subpart", "entity": "机器人", "part": "身体", "positions": ["right"], "sourceColorFamilies": [], "protectedRegions": [], "preserveAppearance": [], "warningIncludes": "额外保护区域", "authoritativeExcludePointCount": 0 }
+    },
+    {
+      "id": "accept-description-extra-adjective",
+      "kind": "accept",
+      "axes": ["whole_object", "description_addition"],
+      "instruction": "把右侧白色商品换成红色。",
+      "planned": { "description": "右侧发亮的白色商品", "semanticScope": "whole_object" },
+      "expect": { "scope": "whole_object", "entity": "商品", "part": "", "positions": ["right"], "sourceColorFamilies": ["white"], "protectedRegions": [], "preserveAppearance": [] }
+    },
+    {
+      "id": "accept-planned-role-omission",
+      "kind": "accept",
+      "axes": ["whole_object", "description_omission", "authoritative_roles"],
+      "instruction": "将左侧红色汽车改成蓝色，背景不要改，并保留反光。",
+      "planned": { "description": "左侧汽车", "semanticScope": "whole_object" },
+      "expect": { "scope": "whole_object", "entity": "汽车", "part": "", "positions": ["left"], "sourceColorFamilies": ["red"], "protectedRegions": ["背景"], "preserveAppearance": ["highlights"], "warningIncludes": "遗漏", "authoritativeExcludePointCount": 0 }
+    },
+    {
+      "id": "accept-appearance-in-description",
+      "kind": "accept",
+      "axes": ["whole_object", "appearance", "description_addition"],
+      "instruction": "把右侧蓝色商品改成橙色，保持高光和纹理。",
+      "planned": { "description": "右侧蓝色商品，保留高光和纹理", "semanticScope": "whole_object" },
+      "expect": { "scope": "whole_object", "entity": "商品", "part": "", "positions": ["right"], "sourceColorFamilies": ["blue"], "protectedRegions": [], "preserveAppearance": ["highlights", "texture"] }
+    },
+    {
+      "id": "reject-wrong-entity",
+      "kind": "reject",
+      "axes": ["wrong_object"],
+      "instruction": "仅将左边的红色汽车调为蓝色。",
+      "planned": { "description": "左侧红色玩具", "semanticScope": "whole_object", "sourceColorFamilies": ["red"] },
+      "expect": { "errorIncludes": "目标实体" }
+    },
+    {
+      "id": "reject-wrong-subpart",
+      "kind": "reject",
+      "axes": ["wrong_part"],
+      "instruction": "把右侧人物的衣袖改成绿色。",
+      "planned": { "description": "右侧人物的领口", "semanticScope": "subpart" },
+      "expect": { "errorIncludes": "目标部件" }
+    },
+    {
+      "id": "reject-wrong-quadrant",
+      "kind": "reject",
+      "axes": ["multiple_instances", "wrong_position"],
+      "instruction": "把右下角绿色玩具改成橙色。",
+      "planned": { "description": "左上角绿色玩具", "semanticScope": "whole_object", "sourceColorFamilies": ["green"] },
+      "expect": { "errorIncludes": "方位" }
+    },
+    {
+      "id": "reject-missing-position",
+      "kind": "reject",
+      "axes": ["multiple_instances", "description_omission", "wrong_position"],
+      "instruction": "把右侧蓝色图标改成粉色。",
+      "planned": { "description": "蓝色图标", "semanticScope": "whole_object", "sourceColorFamilies": ["blue"] },
+      "expect": { "errorIncludes": "缺少用户指定的方位" }
+    },
+    {
+      "id": "reject-extra-position",
+      "kind": "reject",
+      "axes": ["wrong_position", "description_addition"],
+      "instruction": "把中央绿色水果改成青色。",
+      "planned": { "description": "中央右侧绿色水果", "semanticScope": "whole_object", "sourceColorFamilies": ["green"] },
+      "expect": { "errorIncludes": "夹带用户未指定的方位" }
+    },
+    {
+      "id": "reject-whole-narrowed-to-part",
+      "kind": "reject",
+      "axes": ["whole_object", "wrong_scope", "wrong_part"],
+      "instruction": "把右侧粉色花朵改成蓝色。",
+      "planned": { "description": "右侧花朵的花瓣", "semanticScope": "subpart" },
+      "expect": { "errorIncludes": "缩小为部件" }
+    },
+    {
+      "id": "reject-subpart-expanded-to-whole",
+      "kind": "reject",
+      "axes": ["subpart", "wrong_scope", "wrong_part"],
+      "instruction": "把左侧人物的头发改成紫色。",
+      "planned": { "description": "左侧人物", "semanticScope": "whole_object" },
+      "expect": { "errorIncludes": "缺少用户指定的目标部件" }
+    },
+    {
+      "id": "reject-destination-color-as-source",
+      "kind": "reject",
+      "axes": ["source_color_locator", "destination_color_leak"],
+      "instruction": "把左侧红色汽车改成蓝色。",
+      "planned": { "description": "左侧汽车", "semanticScope": "whole_object", "sourceColorFamilies": ["blue"] },
+      "expect": { "errorIncludes": "目标原颜色" }
+    },
+    {
+      "id": "reject-wrong-subpart-source-color",
+      "kind": "reject",
+      "axes": ["subpart", "source_color_locator", "destination_color_leak"],
+      "instruction": "把右侧人物的绿色头发改成紫色。",
+      "planned": { "description": "右侧人物的头发", "semanticScope": "subpart", "sourceColorFamilies": ["purple"] },
+      "expect": { "errorIncludes": "目标原颜色" }
+    },
+    {
+      "id": "reject-extra-target-entity",
+      "kind": "reject",
+      "axes": ["wrong_object", "description_addition"],
+      "instruction": "把左侧汽车改成蓝色。",
+      "planned": { "description": "左侧汽车和树木", "semanticScope": "whole_object" },
+      "expect": { "errorIncludes": "目标实体" }
+    },
+    {
+      "id": "reject-protected-region-used-as-target",
+      "kind": "reject",
+      "axes": ["spatial_protection", "wrong_object", "negation"],
+      "instruction": "把中央商品改成灰色，背景不要改。",
+      "planned": { "description": "中央人物", "semanticScope": "whole_object", "protectedRegions": ["背景"] },
+      "expect": { "errorIncludes": "目标实体" }
+    },
+    {
+      "id": "reject-opposite-vertical-instance",
+      "kind": "reject",
+      "axes": ["multiple_instances", "wrong_position"],
+      "instruction": "将上方橙色商品换成棕色。",
+      "planned": { "description": "下方橙色商品", "semanticScope": "whole_object", "sourceColorFamilies": ["orange"] },
+      "expect": { "errorIncludes": "方位" }
+    },
+    {
+      "id": "reject-eyes-changed-to-mouth",
+      "kind": "reject",
+      "axes": ["subpart", "wrong_part"],
+      "instruction": "把中央人物的眼睛改成蓝色。",
+      "planned": { "description": "中央人物的嘴", "semanticScope": "subpart" },
+      "expect": { "errorIncludes": "目标部件" }
+    },
+    {
+      "id": "reject-whole-car-changed-to-wheel",
+      "kind": "reject",
+      "axes": ["whole_object", "wrong_part", "wrong_scope"],
+      "instruction": "把右侧黑色汽车改成白色。",
+      "planned": { "description": "右侧汽车的黑色轮子", "semanticScope": "subpart", "sourceColorFamilies": ["black"] },
+      "expect": { "errorIncludes": "缩小为部件" }
+    },
+    {
+      "id": "reject-whole-product-changed-to-label",
+      "kind": "reject",
+      "axes": ["whole_object", "wrong_part", "wrong_scope"],
+      "instruction": "把左侧商品改成绿色。",
+      "planned": { "description": "左侧商品的标签", "semanticScope": "subpart" },
+      "expect": { "errorIncludes": "缩小为部件" }
+    },
+    {
+      "id": "reject-extra-part-in-subpart-target",
+      "kind": "reject",
+      "axes": ["subpart", "wrong_part", "description_addition"],
+      "instruction": "把右方机器人的身体换成青色。",
+      "planned": { "description": "右侧机器人的身体和嘴", "semanticScope": "subpart" },
+      "expect": { "errorIncludes": "目标" }
+    },
+    {
+      "id": "reject-building-replaced-by-tree",
+      "kind": "reject",
+      "axes": ["whole_object", "wrong_object"],
+      "instruction": "把左侧建筑改成灰色。",
+      "planned": { "description": "左侧树木", "semanticScope": "whole_object" },
+      "expect": { "errorIncludes": "目标实体" }
+    },
+    {
+      "id": "reject-empty-planned-target",
+      "kind": "reject",
+      "axes": ["missing_target"],
+      "instruction": "把前景黄色宠物改成紫色。",
+      "planned": { "description": "", "semanticScope": "unknown" },
+      "expect": { "errorIncludes": "缺少视觉目标" }
+    }
+  ]
+}
