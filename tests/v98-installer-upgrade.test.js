@@ -16,6 +16,9 @@ fs.mkdirSync(oldRuntime, { recursive: true });
 const previousToken = "ab".repeat(32);
 fs.writeFileSync(path.join(oldRuntime, "bridge-token.json"), JSON.stringify({ version: 1, token: previousToken }), "utf8");
 
+const installer = fs.readFileSync(path.join(root, "Install-UxpV98.ps1"), "utf8");
+assert(!/\bGet-FileHash\b/.test(installer), "installer hashing must not depend on the optional Get-FileHash cmdlet");
+
 const result = childProcess.spawnSync("powershell.exe", [
   "-NoProfile",
   "-ExecutionPolicy", "Bypass",
@@ -33,9 +36,13 @@ assert(
 );
 
 const launcher = fs.readFileSync(path.join(root, "Start-PhotoshopAgentV98.ps1"), "utf8");
+assert(!/\bGet-FileHash\b/.test(launcher), "launcher hashing must not depend on the optional Get-FileHash cmdlet");
 assert(launcher.includes("$Health.bridgeBuild.serverSha256 -eq $expectedServerHash"));
 assert(launcher.includes("$Health.bridgeBuild.providerSha256 -eq $expectedProviderHash"));
 assert(launcher.includes('[Environment]::SetEnvironmentVariable("PS_AGENT_BRIDGE_TOKEN", $previousBridgeToken, "Process")'), "the bridge token must not leak into subsequently launched Photoshop");
 assert(launcher.includes("$installedToken -cne $tokenScript"), "an unchanged installed token must not require a Program Files rewrite on every launch");
+
+const modelVerifier = fs.readFileSync(path.join(root, "tools", "Verify-MobileSAMModels.ps1"), "utf8");
+assert(!/\bGet-FileHash\b/.test(modelVerifier), "model verification must not depend on the optional Get-FileHash cmdlet");
 
 console.log("v9.8 transactional installer, prior-token migration, and launcher identity tests passed");
