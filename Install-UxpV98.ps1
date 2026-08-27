@@ -111,6 +111,18 @@ function Get-TextSha256 {
   }
 }
 
+function Get-FileSha256 {
+  param([string]$Path)
+  $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try {
+    return -join ($sha.ComputeHash($stream) | ForEach-Object { $_.ToString("X2") })
+  } finally {
+    $sha.Dispose()
+    $stream.Dispose()
+  }
+}
+
 $sourceManifestPath = Join-Path $source "manifest.json"
 if (-not (Test-Path -LiteralPath $sourceManifestPath)) {
   throw "v9.8 source manifest is missing."
@@ -128,7 +140,7 @@ foreach ($file in $files) {
     throw "Required v9.8 file is missing: $file"
   }
   if ($file -ne "index.html") {
-    $sourceHashes[$file] = (Get-FileHash -LiteralPath $sourceFile -Algorithm SHA256).Hash
+    $sourceHashes[$file] = Get-FileSha256 -Path $sourceFile
   }
 }
 
@@ -173,13 +185,13 @@ try {
     if (-not (Test-Path -LiteralPath $installedFile)) {
       throw "Installed file is missing: $file"
     }
-    $installedHash = (Get-FileHash -LiteralPath $installedFile -Algorithm SHA256).Hash
+    $installedHash = Get-FileSha256 -Path $installedFile
     $expectedHash = if ($file -eq "index.html") { $expectedIndexHash } else { $sourceHashes[$file] }
     if ($expectedHash -ne $installedHash) {
       throw "Installed file verification failed: $file"
     }
   }
-  if ((Get-FileHash -LiteralPath (Join-Path $Target "bridge-token.js") -Algorithm SHA256).Hash -ne $expectedTokenHash) {
+  if ((Get-FileSha256 -Path (Join-Path $Target "bridge-token.js")) -ne $expectedTokenHash) {
     throw "Installed bridge token verification failed."
   }
 } catch {

@@ -8,6 +8,18 @@ param(
 $ErrorActionPreference = "Stop"
 Import-Module Microsoft.PowerShell.Utility -ErrorAction Stop
 
+function Get-FileSha256 {
+  param([string]$Path)
+  $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try {
+    return -join ($sha.ComputeHash($stream) | ForEach-Object { $_.ToString("x2") })
+  } finally {
+    $sha.Dispose()
+    $stream.Dispose()
+  }
+}
+
 $pluginRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $port = if ($env:PS_AGENT_PORT) { [int]$env:PS_AGENT_PORT } else { 17861 }
 $requiredBridgeVersion = "0.9.8"
@@ -16,8 +28,8 @@ $serverSourcePath = Join-Path $pluginRoot "server.js"
 $providerSourcePath = Join-Path $pluginRoot "uxp-v9.8\model-providers.js"
 if (-not (Test-Path -LiteralPath $serverSourcePath)) { throw "Photoshop Assistant server.js was not found: $serverSourcePath" }
 if (-not (Test-Path -LiteralPath $providerSourcePath)) { throw "Photoshop Assistant v9.8 provider module was not found: $providerSourcePath" }
-$expectedServerHash = (Get-FileHash -LiteralPath $serverSourcePath -Algorithm SHA256).Hash.ToLowerInvariant()
-$expectedProviderHash = (Get-FileHash -LiteralPath $providerSourcePath -Algorithm SHA256).Hash.ToLowerInvariant()
+$expectedServerHash = Get-FileSha256 -Path $serverSourcePath
+$expectedProviderHash = Get-FileSha256 -Path $providerSourcePath
 
 function New-BridgeToken {
   $bytes = New-Object byte[] 32
