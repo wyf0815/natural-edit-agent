@@ -4,6 +4,19 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+function Get-FileSha256 {
+  param([string]$Path)
+  $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try {
+    return -join ($sha.ComputeHash($stream) | ForEach-Object { $_.ToString("X2") })
+  } finally {
+    $sha.Dispose()
+    $stream.Dispose()
+  }
+}
+
 $required = @{
   "mobile_sam_image_encoder.onnx" = @{
     Length = 28157093
@@ -24,7 +37,7 @@ foreach ($name in ($required.Keys | Sort-Object)) {
     continue
   }
   $item = Get-Item -LiteralPath $file
-  $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
+  $hash = Get-FileSha256 -Path $file
   Write-Host "$name`t$($item.Length) bytes`tSHA256 $hash"
   $expected = $required[$name]
   if ($item.Length -ne $expected.Length -or $hash -ne $expected.Sha256) {
